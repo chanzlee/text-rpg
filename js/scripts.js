@@ -6,6 +6,8 @@ function message(msg) {
 // set constants for consequences of attack / attacked
 var gameover = false;
 var battle = false;
+var heros = {};
+var villains = {};
 
 // For refactoring with abstract factory pattern
 // types = {};
@@ -38,7 +40,7 @@ Character.prototype.attack = function (target) {
   target.isDead();
 };
 
-// Hero and Monster will be subclasses of character
+// Hero and Villain will be subclasses of character
 
 function Hero(name, hp, str, lev, xp) {
   //use "apply" to apply Character class method on Hero
@@ -88,28 +90,62 @@ Hero.prototype.levelUp = function(target) {
 }
 
 // Monster//////////////////////
-function Monster(name, hp, str, lev, xp) {
+function Villain(name, hp, str, lev, xp) {
   Character.apply(this, arguments);
   this.lev = lev || 1;
   this.xp = xp || 0;
 }
-Monster.prototype = Object.create(Character.prototype);
-Monster.prototype.constructor = Monster;
+Villain.prototype = Object.create(Character.prototype);
+Villain.prototype.constructor = Villain;
 
-// Needs function to generate random monster
+
+//Generate the list of villain and appends into villains object.
+function villainAppender(){
+  villains = {};
+  var villainNames = {
+    villain1: "loki",
+    villain2: "ultron",
+    villain3: "thanos"
+  }
+  var loki = new Villain("Loki", 25, 5, 1, 30);
+  var ultron = new Villain("Ultron", 50, 10, 5, 90);
+  var thanos = new Villain("Thanos", 100, 20, 10, 270);
+
+  villains[1]=loki;
+  villains[2]=ultron;
+  villains[3]=thanos;
+  // console.log(villains)
+}
+
+//Create random villain from the villains object.
+function randomVillainCreator(){
+  currentVillain =
+  villains[Math.floor(Math.random()*Object.keys(villains).length)+1];
+}
 
 
 //Front-end////////////////////////////////////////
 $(document).ready(function(){
-  var hero = new Hero("Chan", 100, 10);
 
-  var adam = new Character("adam",100,10);
+  var adam = new Character("Adam",100,10);
   console.log(adam);
+
+  var chan = new Hero("Chan", 100, 10);
+  console.log(chan);
+
+  var lucifer = new Character("Lucifer",100,10);
+  console.log(lucifer);
+
+  villainAppender();
+  randomVillainCreator();
+  console.log(currentVillain);
 
   //should include something to interact with users for choosing next action.
 
-  //If user triggers "hunting monster" it should generate random monster.
-
+  //If user triggers "Villain Cease"" it should generate random monster.
+  $("#temp-booter").click(function(){
+    
+  });
   $("#game-menu").submit(function(e){
     e.preventDefault();
   });
