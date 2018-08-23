@@ -13,9 +13,13 @@ button {
   width: 100px;
 }
 
-button#temp-booter {
+button#temp-booter, button#temp-generator  {
   width: 150px;
-  margin: 50px;
+  margin: 30px;
+}
+
+div#log {
+  margin-top: 80px;
 }
 
 form {

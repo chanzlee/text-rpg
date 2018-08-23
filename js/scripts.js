@@ -1,4 +1,4 @@
-import * from './turn.js';
+// import * from './turn.js';
 
 // AUG 22th log
 // 1. Can add prototype function for recovery and escape if it becomes turn base game.
@@ -20,8 +20,8 @@ var gameover = false;
 var isBattle = false;
 var heros = {};
 var villains = {};
-var currentHero;
-var currentVillain;
+var currentPlayer= {};
+var currentVillain= {};
 
 // For refactoring with abstract factory pattern
 // types = {};
@@ -30,6 +30,7 @@ var currentVillain;
 function Character(name, hp, str) {
   this.name = name;
   this.hp = hp;
+  this.maxHp =hp;
   this.str = str;
   this.isDead = false;
 }
@@ -115,9 +116,10 @@ Hero.prototype.battle = function(target){
     }
   }
   if (gameover) {
-    setTimeout(exit(),3000);
+    exit();
   } else {
     this.gainXp(target);
+    this.hp = this.maxHp;
   }
 }
 
@@ -160,14 +162,16 @@ function randomVilGen(){
 // }
 
 var newHero = function (){
-  currentHero = new Hero(prompt('Enter your hero name'), 100, 10);
-  message("Hello,"+currentHero.name+"! Welcome to Hero world.");
-  message("Let's beat some villain ass.");
-  message("Click Buttons to start");
+  currentPlayer = new Hero(prompt('Enter your hero name').toUpperCase(), 100, 10, 1, 10);
+  message("Hello, "+currentPlayer.name+" ! Welcome to Hero world.");
+  message("Let's beat some villain's ass.");
+  message("Click button to stop villains.");
 }
 
 var exit = function (){
-  $('div.container').html("<h1>Game Over</h1>");
+  setTimeout( function (){
+  $('div.container').html("<h1>Game Over</h1><br><p>Refresh to restart</p>");
+  }, 5000);
 }
 
 var clearLog = function (){
@@ -182,7 +186,7 @@ var clearLog = function (){
 //   if (input === '1') {
 //     return randomVilGen();
 //   } else if (input === '2') {
-//     currentHero.hp = currentHero.maxHp;
+//     currentPlayer.hp = currentPlayer.maxHp;
 //     return message('Recovered');
 //   } else if (input === '3') {
 //     return exit();
@@ -195,8 +199,8 @@ var clearLog = function (){
 //   if (input === '1') {
 //     return this.attack();
 //   } else if (input === '2') {
-//     if (currentHero.hp + 5< currentHero.maxHp) {
-//       currentHero.hp += 5;
+//     if (currentPlayer.hp + 5< currentPlayer.maxHp) {
+//       currentPlayer.hp += 5;
 //     }
 //     return message('Recovered').nextTurn();
 //   } else if (input === '3') {
@@ -214,7 +218,7 @@ var clearLog = function (){
 //       message(currentVillain.name + "'s turn'");
 //       setTimeout(function () {
 //         $('#battle-button').disabled = false;
-//         if (currentHero.attacked()) {
+//         if (currentPlayer.attacked()) {
 //           message("Got damage of "+currentVillain.str);
 //           setTimeout(function () {
 //             message(hero.name + "'s turn'");
@@ -229,18 +233,35 @@ var clearLog = function (){
 
 //Front-end////////////////////////////////////////
 $(document).ready(function(){
-  newHero();
+  $("#temp-generator").click(function(){
+    newHero();
+    $("#hero-info").removeClass("hidden");
+    $("#hero-name").text(currentPlayer.name);
+    $("#hero-hp").text(currentPlayer.hp);
+    $("#hero-str").text(currentPlayer.str);
+    $("#hero-xp").text(currentPlayer.xp);
+    $("#hero-lv").text(currentPlayer.lv);
+
+  });
   //should incorporate other contents linked to the hidden formaat.
 
 
   $("#temp-booter").click(function(){
     clearLog();
-    message("Stop the villain!");
     vilAppender();
     randomVilGen();
-    message("Encountered "+currentVillain.name+"!")
-    currentHero.battle(currentVillain);
+    message("Encountered "+currentVillain.name+"...");
+    message(currentPlayer.name+": "+currentVillain.name+"! Cease and desist!");
+    message(currentVillain.name+": What's this fucker?!");
+    currentPlayer.battle(currentVillain);
+    $("#hero-info").removeClass("hidden");
+    $("#hero-name").text(currentPlayer.name);
+    $("#hero-hp").text(currentPlayer.hp);
+    $("#hero-str").text(currentPlayer.str);
+    $("#hero-xp").text(currentPlayer.xp);
+    $("#hero-lv").text(currentPlayer.lv);
   });
+
   $("#game-menu").submit(function(e){
     e.preventDefault();
     var menuOption = $("menu-input").val();
