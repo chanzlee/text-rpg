@@ -1,3 +1,9 @@
+// AUG 22th log
+// 1. Can add prototype function for recovery and escape if it becomes turn base game.
+// 2. Should generalize the villaincease to encountering platform.
+// 3. Check overlapping prop or proto function.
+// 4. Can be refactored with isBattle and vilAppender.
+
 function message(msg) {
   $("#log").append("<div></div><br>")
   $("div").last().html(msg);
@@ -31,7 +37,7 @@ Character.prototype.checkDead = function (){
 }
 
 Character.prototype.attacked = function (damage) {
-  this.hp -= damage;
+  this.hp = Math.max(this.hp-damage,0);
   message(this.name + "'s health point became "+ this.hp+ "!");
   this.checkDead();
 };
@@ -57,7 +63,7 @@ Hero.prototype = Object.create(Character.prototype);
 Hero.prototype.constructor = Hero;
 
 Hero.prototype.attacked = function(damage) {
-  this.hp -= damage;
+  this.hp = Math.max(this.hp-damage,0);
   message(this.name + 's health point became' + this.hp+ "!");
   this.checkDead();
   // Hero only
@@ -149,16 +155,16 @@ $(document).ready(function(){
   var adam = new Character("Adam",100,10);
   console.log(adam);
 
-  var chan = new Hero("Chan", 1000, 100, 10);
+  var chan = new Hero("Chan", 10000, 30, 10);
   console.log(chan);
 
   var lucifer = new Villain("Lucifer",100,10);
   console.log(lucifer);
 
 
-  //should include something to interact with users for choosing next action.
+  //should incorporate other contents linked to the hidden formaat.
 
-  //If user triggers "Villain Cease"" it should generate random monster.
+
   $("#temp-booter").click(function(){
     message("Stop the villain!");
     vilAppender();
