@@ -7,18 +7,23 @@ function message(msg) {
 var gameover = false;
 var battle = false;
 
+// For refactoring with abstract factory pattern
+// types = {};
 
-jobs = {};
-
-//Idea for additional keys: stats{int luk des}, item{equip, dispose}
+// Character//////////////////////
 function Character(name, hp, str) {
   this.name = name;
   this.hp = hp;
   this.str = str;
 }
 
+var adam = new Character("adam",100,10);
+console.log(adam);
+
+//Idea for additional keys: stats{int luk des}, item{equip, dispose}
+
 Character.prototype.isDead = function (){
-  this.hp <= 0 ? battle = false;
+  this.hp <= 0 ? battle = false:
   message(this.name + 'is dead');
 }
 
@@ -43,6 +48,7 @@ function Hero(name, hp, str, lev, xp) {
   this.xp = xp || 0;
 }
 
+// Hero//////////////////////
 //Hero also inherits prototype methods of Character.
 Hero.prototype = Object.create(Character.prototype);
 Hero.prototype.constructor = Hero;
@@ -55,7 +61,7 @@ Hero.prototype.attacked = function(damage) {
   message('Game Over!');
   gameover = true;
   }
-};
+}
 Hero.prototype.attack = function (target) {
   message(this.name + "attacked" + target.name +"!");
   target.attacked(this.str);
@@ -64,6 +70,24 @@ Hero.prototype.attack = function (target) {
   this.gainXp(target);
   }
 
+Hero.prototype.gainXp = function(target) {
+  message(`${this.name} earned  ${target.xp} through the battle!`);
+  this.xp += target.xp;
+  if (this.xp > 100) {
+    this.lev++;
+  }
+
+Hero.prototype.levelUp = function(target) {
+  message(`LEVEL UP! ${this.name} became ${this.lev}!`);
+  this.hp += 10;
+  this.str += 1;
+  this.xp = 0;
+  message(`${this.name}'s health point increased to ${this.hp}!`);
+  message(`${this.name}'s strength increased to ${this.str}!`);
+  }
+};
+
+// Monster//////////////////////
 function Monster(name, hp, str, lev, xp) {
   Character.apply(this, arguments);
   this.lev = lev || 1;
