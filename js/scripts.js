@@ -1,11 +1,11 @@
 function message(msg) {
-  $("#log").append("<div></div>")
+  $("#log").append("<div></div><br>")
   $("div").last().html(msg);
 }
 
 // set constants for consequences of attack / attacked
 var gameover = false;
-var battle = false;
+var isBattle = false;
 var heros = {};
 var villains = {};
 
@@ -17,27 +17,28 @@ function Character(name, hp, str) {
   this.name = name;
   this.hp = hp;
   this.str = str;
+  this.isDead = false;
 }
-
-
-
 
 //Idea for additional keys: stats{int luk des}, item{equip, dispose}
 
-Character.prototype.isDead = function (){
-  this.hp <= 0 ? battle = false:
-  message(this.name + 'is dead');
+Character.prototype.checkDead = function (){
+  if(this.hp <= 0){
+  isBattle = false;
+  this.isDead= true;
+  message(this.name + ' is dead...');
+  }
 }
 
 Character.prototype.attacked = function (damage) {
   this.hp -= damage;
-  message(this.name + 's health point became' + this.hp+ "!");
-  this.isDead();
+  message(this.name + "'s health point became "+ this.hp+ "!");
+  this.checkDead();
 };
 Character.prototype.attack = function (target) {
   message(this.name + "attacked" + target.name +"!");
   target.attacked(this.str);
-  target.isDead();
+  target.checkDead();
 };
 
 // Hero and Villain will be subclasses of character
@@ -58,28 +59,28 @@ Hero.prototype.constructor = Hero;
 Hero.prototype.attacked = function(damage) {
   this.hp -= damage;
   message(this.name + 's health point became' + this.hp+ "!");
-  this.isDead();
+  this.checkDead();
   // Hero only
+  if (this.isDead) {
   message('Game Over!');
   gameover = true;
+  }
 }
 
 Hero.prototype.attack = function (target) {
-  message(this.name + "attacked" + target.name +"!");
+  message(this.name + " attacked " + target.name +"!");
   target.attacked(this.str);
-  target.isDead();
-  // Hero only
-  this.gainXp(target);
 }
 
 Hero.prototype.gainXp = function(target) {
-  message(`${this.name} earned  ${target.xp} through the battle!`);
+  message(this.name+" earned "+target.xp+" through the battle!");
   this.xp += target.xp;
   if (this.xp > 100) {
-    this.lev++;
+  this.levelUp();
 }
 
-Hero.prototype.levelUp = function(target) {
+Hero.prototype.levelUp = function() {
+  this.lev++;
   message(`LEVEL UP! ${this.name} became ${this.lev}!`);
   this.hp += 10;
   this.str += 1;
@@ -100,7 +101,7 @@ Villain.prototype.constructor = Villain;
 
 
 //Generate the list of villain and appends into villains object.
-function villainAppender(){
+function vilAppender(){
   villains = {};
   var villainNames = {
     villain1: "loki",
@@ -118,9 +119,27 @@ function villainAppender(){
 }
 
 //Create random villain from the villains object.
-function randomVillainCreator(){
+function randomVilGen(){
   currentVillain =
   villains[Math.floor(Math.random()*Object.keys(villains).length)+1];
+}
+
+ Hero.prototype.battle = function(target){
+  // console.log(target);
+  // console.log(target[str]);
+  isBattle=true;
+  while (!this.isDead && !target.isDead){
+    this.attack(target);
+    if (!target.isDead){
+    this.attacked(target.str);
+    }
+  }
+  if (gameover) {
+    chan = new Hero("Chan", 1000, 100, 10)
+    message("Loaded the last saved data");
+  } else {
+  this.gainXp(target);
+  }
 }
 
 
@@ -130,21 +149,24 @@ $(document).ready(function(){
   var adam = new Character("Adam",100,10);
   console.log(adam);
 
-  var chan = new Hero("Chan", 100, 10);
+  var chan = new Hero("Chan", 1000, 100, 10);
   console.log(chan);
 
   var lucifer = new Character("Lucifer",100,10);
   console.log(lucifer);
 
-  villainAppender();
-  randomVillainCreator();
-  console.log(currentVillain);
+  vilAppender();
+
 
   //should include something to interact with users for choosing next action.
 
   //If user triggers "Villain Cease"" it should generate random monster.
   $("#temp-booter").click(function(){
-    
+    message("Stop the villain!");
+    vilAppender();
+    randomVilGen();
+    message("Encountered "+currentVillain.name+"!")
+    chan.battle(currentVillain);
   });
   $("#game-menu").submit(function(e){
     e.preventDefault();

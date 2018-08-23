@@ -13,6 +13,11 @@ button {
   width: 100px;
 }
 
+button#temp-booter {
+  width: 150px;
+  margin: 50px;
+}
+
 form {
   margin:50px 30px;
 }
