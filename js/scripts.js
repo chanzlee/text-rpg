@@ -152,10 +152,8 @@ $(document).ready(function(){
   var chan = new Hero("Chan", 1000, 100, 10);
   console.log(chan);
 
-  var lucifer = new Character("Lucifer",100,10);
+  var lucifer = new Villain("Lucifer",100,10);
   console.log(lucifer);
-
-  vilAppender();
 
 
   //should include something to interact with users for choosing next action.
