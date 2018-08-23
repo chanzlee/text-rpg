@@ -61,5 +61,9 @@ $(document).ready(function(){
 
   //If user triggers "hunting monster" it should generate random monster.
 
+  $("#game-menu").submit(function(e){
+    e.preventDefault()
+  });
+
 
 });
