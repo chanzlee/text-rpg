@@ -17,8 +17,8 @@ function Character(name, hp, str) {
   this.str = str;
 }
 
-var adam = new Character("adam",100,10);
-console.log(adam);
+
+
 
 //Idea for additional keys: stats{int luk des}, item{equip, dispose}
 
@@ -60,22 +60,22 @@ Hero.prototype.attacked = function(damage) {
   // Hero only
   message('Game Over!');
   gameover = true;
-  }
 }
+
 Hero.prototype.attack = function (target) {
   message(this.name + "attacked" + target.name +"!");
   target.attacked(this.str);
   target.isDead();
   // Hero only
   this.gainXp(target);
-  }
+}
 
 Hero.prototype.gainXp = function(target) {
   message(`${this.name} earned  ${target.xp} through the battle!`);
   this.xp += target.xp;
   if (this.xp > 100) {
     this.lev++;
-  }
+}
 
 Hero.prototype.levelUp = function(target) {
   message(`LEVEL UP! ${this.name} became ${this.lev}!`);
@@ -85,7 +85,7 @@ Hero.prototype.levelUp = function(target) {
   message(`${this.name}'s health point increased to ${this.hp}!`);
   message(`${this.name}'s strength increased to ${this.str}!`);
   }
-};
+}
 
 // Monster//////////////////////
 function Monster(name, hp, str, lev, xp) {
@@ -101,7 +101,10 @@ Monster.prototype.constructor = Monster;
 
 //Front-end////////////////////////////////////////
 $(document).ready(function(){
-  var hero = new Hero("Chan", 100, 10)
+  var hero = new Hero("Chan", 100, 10);
+
+  var adam = new Character("adam",100,10);
+  console.log(adam);
 
   //should include something to interact with users for choosing next action.
 
