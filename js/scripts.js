@@ -6,9 +6,9 @@
 // 3. Check overlapping prop or proto function.
 // 4. Can be refactored with isBattle and vilAppender.
 
-document.oncontextmenu = function() {
-  return false;
-};
+// document.oncontextmenu = function() {
+//   return false;
+// };
 
 function message(msg) {
   $("#log").append("<div></div><br>")
@@ -111,8 +111,8 @@ Hero.prototype.battle = function(target){
   isBattle=true;
   while (!this.isDead && !target.isDead){
     this.attack(target);
-    if (!target.isDead){
-      this.attacked(target.str);
+      if (!target.isDead){
+        this.attacked(target.str);
     }
   }
   if (gameover) {
@@ -139,15 +139,21 @@ function vilAppender(){
   var villainNames = {
     villain1: "loki",
     villain2: "ultron",
-    villain3: "thanos"
+    villain3: "thanos",
+    villain4: "akjol"
   }
   var loki = new Villain("Loki", 25, 5, 1, 30);
   var ultron = new Villain("Ultron", 50, 10, 5, 90);
   var thanos = new Villain("Thanos", 100, 20, 10, 270);
+  var connor = new Villain("Connor", 1, 1, 1, 1);
+  var akjol = new Villain("Akjol Pyo", 200, 200, 200, 200);
+
 
   villains[1]=loki;
   villains[2]=ultron;
   villains[3]=thanos;
+  villains[4]=connor;
+  villains[5]=akjol;
   // console.log(villains)
 }
 
@@ -163,9 +169,16 @@ function randomVilGen(){
 
 var newHero = function (){
   currentPlayer = new Hero(prompt('Enter your hero name').toUpperCase(), 100, 10, 1, 10);
-  message("Hello, "+currentPlayer.name+" ! Welcome to Hero world.");
-  message("Let's beat some villain's ass.");
-  message("Click button to stop villains.");
+
+  setTimeout(function () {
+    message("Hello, "+currentPlayer.name+" ! Welcome to the Pokemon world.");
+    setTimeout(function () {
+      message("Let's hunt and cook some pokemons.");
+      setTimeout(function(){
+        message("Click button to start hunting.");
+      },1500);
+    },1500);
+  },500);
 }
 
 var exit = function (){
@@ -240,7 +253,9 @@ $(document).ready(function(){
     $("#hero-hp").text(currentPlayer.hp);
     $("#hero-str").text(currentPlayer.str);
     $("#hero-xp").text(currentPlayer.xp);
-    $("#hero-lv").text(currentPlayer.lv);
+    $("#hero-lv").text(currentPlayer.lev);
+    $("#temp-generator").hide();
+    $("#temp-booter").show();
 
   });
   //should incorporate other contents linked to the hidden formaat.
@@ -250,16 +265,24 @@ $(document).ready(function(){
     clearLog();
     vilAppender();
     randomVilGen();
-    message("Encountered "+currentVillain.name+"...");
-    message(currentPlayer.name+": "+currentVillain.name+"! Cease and desist!");
-    message(currentVillain.name+": What's this fucker?!");
-    currentPlayer.battle(currentVillain);
+    setTimeout(function () {
+      message("Encountered "+currentVillain.name+"...");
+      setTimeout(function () {
+        message(currentPlayer.name+": "+currentVillain.name+"! You look delicious!");
+        setTimeout(function(){
+          message(currentVillain.name+": No! I taste bad!");
+          setTimeout(function(){
+            currentPlayer.battle(currentVillain)
+          },1000);
+        },1000);
+      },1000);
+    },1000);
     $("#hero-info").removeClass("hidden");
     $("#hero-name").text(currentPlayer.name);
     $("#hero-hp").text(currentPlayer.hp);
     $("#hero-str").text(currentPlayer.str);
     $("#hero-xp").text(currentPlayer.xp);
-    $("#hero-lv").text(currentPlayer.lv);
+    $("#hero-lv").text(currentPlayer.lev);
   });
 
   $("#game-menu").submit(function(e){
