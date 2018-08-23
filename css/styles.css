@@ -4,6 +4,10 @@ h1 {
   padding-bottom: 50px;
 }
 
+h3 {
+  text-transform: capitalize;
+}
+
 
 button {
   width: 100px;
@@ -13,7 +17,10 @@ form {
   margin:50px 30px;
 }
 
-.col-md-6 {
+.hidden {
+  display: none;
+}
+/* .col-md-6 {
   margin: 30px 30px;
   background-color: rgba(255, 0, 0, 0.3);
-}
+} */

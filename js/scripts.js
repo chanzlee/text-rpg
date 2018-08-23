@@ -45,7 +45,7 @@ Hero.prototype.constructor = Hero;
 function Monster(name, hp, str, lev, xp) {
   Character.apply(this, arguments);
   this.lev = lev || 1;
-  this.xp = xp || 10;
+  this.xp = xp || 0;
 }
 Monster.prototype = Object.create(Character.prototype);
 Monster.prototype.constructor = Monster;
@@ -62,7 +62,7 @@ $(document).ready(function(){
   //If user triggers "hunting monster" it should generate random monster.
 
   $("#game-menu").submit(function(e){
-    e.preventDefault()
+    e.preventDefault();
   });
 
 
