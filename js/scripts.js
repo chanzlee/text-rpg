@@ -1,8 +1,14 @@
+import * from './turn.js';
+
 // AUG 22th log
 // 1. Can add prototype function for recovery and escape if it becomes turn base game.
 // 2. Should generalize the villaincease to encountering platform.
 // 3. Check overlapping prop or proto function.
 // 4. Can be refactored with isBattle and vilAppender.
+
+document.oncontextmenu = function() {
+  return false;
+};
 
 function message(msg) {
   $("#log").append("<div></div><br>")
@@ -14,6 +20,8 @@ var gameover = false;
 var isBattle = false;
 var heros = {};
 var villains = {};
+var currentHero;
+var currentVillain;
 
 // For refactoring with abstract factory pattern
 // types = {};
@@ -49,6 +57,7 @@ Character.prototype.attack = function (target) {
 
 // Hero and Villain will be subclasses of character
 
+// Hero//////////////////////
 function Hero(name, hp, str, lev, xp) {
   //use "apply" to apply Character class method on Hero
   Character.apply(this, arguments);
@@ -57,7 +66,8 @@ function Hero(name, hp, str, lev, xp) {
   this.xp = xp || 0;
 }
 
-// Hero//////////////////////
+
+
 //Hero also inherits prototype methods of Character.
 Hero.prototype = Object.create(Character.prototype);
 Hero.prototype.constructor = Hero;
@@ -66,10 +76,8 @@ Hero.prototype.attacked = function(damage) {
   this.hp = Math.max(this.hp-damage,0);
   message(this.name + 's health point became' + this.hp+ "!");
   this.checkDead();
-  // Hero only
   if (this.isDead) {
-  message('Game Over!');
-  gameover = true;
+  gameover=true;
   }
 }
 
@@ -96,7 +104,24 @@ Hero.prototype.levelUp = function() {
   }
 }
 
-// Monster//////////////////////
+Hero.prototype.battle = function(target){
+  // console.log(target);
+  // console.log(target[str]);
+  isBattle=true;
+  while (!this.isDead && !target.isDead){
+    this.attack(target);
+    if (!target.isDead){
+      this.attacked(target.str);
+    }
+  }
+  if (gameover) {
+    setTimeout(exit(),3000);
+  } else {
+    this.gainXp(target);
+  }
+}
+
+// Villain//////////////////////
 function Villain(name, hp, str, lev, xp) {
   Character.apply(this, arguments);
   this.lev = lev || 1;
@@ -130,52 +155,102 @@ function randomVilGen(){
   villains[Math.floor(Math.random()*Object.keys(villains).length)+1];
 }
 
- Hero.prototype.battle = function(target){
-  // console.log(target);
-  // console.log(target[str]);
-  isBattle=true;
-  while (!this.isDead && !target.isDead){
-    this.attack(target);
-    if (!target.isDead){
-    this.attacked(target.str);
-    }
-  }
-  if (gameover) {
-    chan = new Hero("Chan", 1000, 100, 10)
-    message("Loaded the last saved data");
-  } else {
-  this.gainXp(target);
-  }
+// function clearMonster(){
+//
+// }
+
+var newHero = function (){
+  currentHero = new Hero(prompt('Enter your hero name'), 100, 10);
+  message("Hello,"+currentHero.name+"! Welcome to Hero world.");
+  message("Let's beat some villain ass.");
+  message("Click Buttons to start");
 }
+
+var exit = function (){
+  $('div.container').html("<h1>Game Over</h1>");
+}
+
+var clearLog = function (){
+  $('div#log').html("");
+}
+
+// var turnBattle = function(){
+//   var turn = true;
+// }
+//
+// var menuInput= function (input) {
+//   if (input === '1') {
+//     return randomVilGen();
+//   } else if (input === '2') {
+//     currentHero.hp = currentHero.maxHp;
+//     return message('Recovered');
+//   } else if (input === '3') {
+//     return exit();
+//   } else {
+//     alert('error');
+//   }
+// }
+//
+// var battleInput= function (input) {
+//   if (input === '1') {
+//     return this.attack();
+//   } else if (input === '2') {
+//     if (currentHero.hp + 5< currentHero.maxHp) {
+//       currentHero.hp += 5;
+//     }
+//     return message('Recovered').nextTurn();
+//   } else if (input === '3') {
+//     return this.clearMonster().message('Escaped');
+//   } else {
+//     alert('error');
+//   }
+// }
+//
+// var  nextTurn= function () {
+//   turn = !turn;
+//   $('#battle-button').disabled = true;
+//   if (!turn) {
+//     setTimeout(function () {
+//       message(currentVillain.name + "'s turn'");
+//       setTimeout(function () {
+//         $('#battle-button').disabled = false;
+//         if (currentHero.attacked()) {
+//           message("Got damage of "+currentVillain.str);
+//           setTimeout(function () {
+//             message(hero.name + "'s turn'");
+//           }, 1000);
+//         }
+//       }, 1000);
+//     }, 1000);
+//   }
+// }
+
 
 
 //Front-end////////////////////////////////////////
 $(document).ready(function(){
-
-  var adam = new Character("Adam",100,10);
-  console.log(adam);
-
-  var chan = new Hero("Chan", 10000, 30, 10);
-  console.log(chan);
-
-  var lucifer = new Villain("Lucifer",100,10);
-  console.log(lucifer);
-
-
+  newHero();
   //should incorporate other contents linked to the hidden formaat.
 
 
   $("#temp-booter").click(function(){
+    clearLog();
     message("Stop the villain!");
     vilAppender();
     randomVilGen();
     message("Encountered "+currentVillain.name+"!")
-    chan.battle(currentVillain);
+    currentHero.battle(currentVillain);
   });
   $("#game-menu").submit(function(e){
     e.preventDefault();
+    var menuOption = $("menu-input").val();
+    $("#game-menu")[0].reset;
+    TurnGame.getInstance().menuInput(menuOption);
+
   });
   $("#battle-menu").submit(function(e){
     e.preventDefault();
+    var battleOption = $("battle-input").val();
+    TurnGame.getInstance().battleInput(battleOption);
   });
 });
