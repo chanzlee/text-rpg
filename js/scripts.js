@@ -20,12 +20,12 @@ Character.prototype.isDead = function (){
 
 Character.prototype.attacked = function (damage) {
   this.hp -= damage;
-  message(this.name + 's health point became' + this.hp);
+  message(this.name + 's health point became' + this.hp+ "!");
   this.isDead();
 };
 Character.prototype.attack = function (target) {
   message(this.name + "is attacking" + target.name);
-  target.attacked(this.att);
+  target.attacked(this.str);
 };
 
 // Hero and Monster will be subclasses of character
@@ -33,7 +33,7 @@ Character.prototype.attack = function (target) {
 function Hero(name, hp, str, lev, xp) {
   //use "apply" to apply Character class method on Hero
   Character.apply(this, arguments);
-  //Syntetic Sugar: || goes down until it finds true, $$ : until false.
+  //Syntetic Sugar: || goes down until find true, $$ : until false.
   this.lev = lev || 1;
   this.xp = xp || 0;
 }
@@ -53,6 +53,7 @@ Monster.prototype.constructor = Monster;
 // Needs function to generate random monster
 
 
+//Front-end////////////////////////////////////////
 $(document).ready(function(){
   var hero = new Hero("Chan", 100, 10)
 
