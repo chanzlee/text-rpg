@@ -7,6 +7,10 @@ function message(msg) {
 var gameover = false;
 var battle = false;
 
+
+jobs = {};
+
+//Idea for additional keys: stats{int luk des}, item{equip, dispose}
 function Character(name, hp, str) {
   this.name = name;
   this.hp = hp;
@@ -24,8 +28,9 @@ Character.prototype.attacked = function (damage) {
   this.isDead();
 };
 Character.prototype.attack = function (target) {
-  message(this.name + "is attacking" + target.name);
+  message(this.name + "attacked" + target.name +"!");
   target.attacked(this.str);
+  target.isDead();
 };
 
 // Hero and Monster will be subclasses of character
@@ -41,6 +46,23 @@ function Hero(name, hp, str, lev, xp) {
 //Hero also inherits prototype methods of Character.
 Hero.prototype = Object.create(Character.prototype);
 Hero.prototype.constructor = Hero;
+
+Hero.prototype.attacked = function(damage) {
+  this.hp -= damage;
+  message(this.name + 's health point became' + this.hp+ "!");
+  this.isDead();
+  // Hero only
+  message('Game Over!');
+  gameover = true;
+  }
+};
+Hero.prototype.attack = function (target) {
+  message(this.name + "attacked" + target.name +"!");
+  target.attacked(this.str);
+  target.isDead();
+  // Hero only
+  this.gainXp(target);
+  }
 
 function Monster(name, hp, str, lev, xp) {
   Character.apply(this, arguments);
@@ -64,6 +86,7 @@ $(document).ready(function(){
   $("#game-menu").submit(function(e){
     e.preventDefault();
   });
-
-
+  $("#battle-menu").submit(function(e){
+    e.preventDefault();
+  });
 });
